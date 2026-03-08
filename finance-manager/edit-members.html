@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Members - JSS College Finance</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-900 to-slate-900">
+    <!-- Navigation -->
+    <nav class="glass-nav fixed top-0 left-0 right-0 z-50 px-4 py-3">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                    <span class="text-white font-bold text-lg">JSS</span>
+                </div>
+                <div class="text-white">
+                    <h1 class="text-lg font-semibold">Edit Member List</h1>
+                </div>
+            </div>
+            <div class="flex gap-4">
+                <a href="admin.html" class="nav-link px-4 py-2 rounded-lg text-white hover:bg-white/10 transition-all duration-300">Back to Dashboard</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 pt-24 pb-12">
+        <!-- Header Section -->
+        <div class="glass-card max-w-6xl mx-auto p-6 rounded-3xl mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-white mb-2">Member Management</h2>
+                    <p class="text-indigo-300">Add, remove, or update member payment status</p>
+                </div>
+                <div class="flex items-end gap-4">
+                    <div class="flex-1">
+                        <label class="block text-indigo-300 text-sm mb-2">Add New Member</label>
+                        <div class="flex gap-2">
+                            <input type="text" id="newMemberName" placeholder="Enter member name" class="flex-1 px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+                            <button onclick="addMember()" class="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl transition-colors font-medium">
+                                Add Member
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Collection Amount Display -->
+            <div class="mt-6 p-4 bg-white/5 rounded-xl">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <span class="text-indigo-300">Current Collection Amount: </span>
+                        <span class="text-yellow-400 font-bold text-xl">₹<span id="currentCollectionAmount">0</span></span>
+                        <span class="text-indigo-300"> per student</span>
+                    </div>
+                    <a href="admin.html" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors text-sm">
+                        Change Amount
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Summary -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <div class="glass-card p-4 rounded-xl text-center">
+                <div class="text-3xl font-bold text-white" id="totalMembers">0</div>
+                <div class="text-indigo-300 text-sm">Total Members</div>
+            </div>
+            <div class="glass-card p-4 rounded-xl text-center">
+                <div class="text-3xl font-bold text-green-400" id="paidMembers">0</div>
+                <div class="text-indigo-300 text-sm">Paid</div>
+            </div>
+            <div class="glass-card p-4 rounded-xl text-center">
+                <div class="text-3xl font-bold text-red-400" id="unpaidMembers">0</div>
+                <div class="text-indigo-300 text-sm">Unpaid</div>
+            </div>
+            <div class="glass-card p-4 rounded-xl text-center">
+                <div class="text-3xl font-bold text-yellow-400">₹<span id="totalCollected">0</span></div>
+                <div class="text-indigo-300 text-sm">Collected</div>
+            </div>
+        </div>
+
+        <!-- Search and Filter -->
+        <div class="glass-card max-w-6xl mx-auto p-4 rounded-3xl mb-6">
+            <div class="flex flex-col md:flex-row gap-4">
+                <div class="flex-1">
+                    <input type="text" id="searchInput" placeholder="Search by name..." class="w-full px-6 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="filterMembers('all')" class="filter-btn px-6 py-3 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 transition-all" data-filter="all">All</button>
+                    <button onclick="filterMembers('paid')" class="filter-btn px-6 py-3 rounded-xl bg-white/10 text-white hover:bg-white/20 transition-all" data-filter="paid">Paid</button>
+                    <button onclick="filterMembers('unpaid')" class="filter-btn px-6 py-3 rounded-xl bg-white/10 text-white hover:bg-white/20 transition-all" data-filter="unpaid">Unpaid</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Member List -->
+        <div class="glass-card max-w-6xl mx-auto p-6 rounded-3xl overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="border-b border-white/10">
+                            <th class="text-left py-4 px-4 text-indigo-300 font-medium">ID</th>
+                            <th class="text-left py-4 px-4 text-indigo-300 font-medium">Name</th>
+                            <th class="text-center py-4 px-4 text-indigo-300 font-medium">Status</th>
+                            <th class="text-right py-4 px-4 text-indigo-300 font-medium">Amount</th>
+                            <th class="text-center py-4 px-4 text-indigo-300 font-medium">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="memberTableBody" class="text-white">
+                        <!-- Members will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Bulk Actions -->
+        <div class="glass-card max-w-6xl mx-auto p-6 rounded-3xl mt-6">
+            <h3 class="text-xl font-bold text-white mb-4">Bulk Actions</h3>
+            <div class="flex flex-wrap gap-4">
+                <button onclick="markAllPaid()" class="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl transition-colors font-medium">
+                    Mark All as Paid
+                </button>
+                <button onclick="markAllUnpaid()" class="px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl transition-colors font-medium">
+                    Mark All as Unpaid
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="glass-card w-full max-w-md p-8 rounded-3xl">
+            <h3 class="text-2xl font-bold text-white mb-6">Edit Member</h3>
+            <input type="hidden" id="editMemberId">
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-indigo-300 text-sm mb-2">Name</label>
+                    <input type="text" id="editMemberName" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-indigo-300 text-sm mb-2">Status</label>
+                    <select id="editMemberStatus" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option value="NO">Unpaid</option>
+                        <option value="YES">Paid</option>
+                    </select>
+                </div>
+                <div class="flex gap-4 mt-6">
+                    <button onclick="saveEdit()" class="flex-1 px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl transition-colors font-medium">
+                        Save Changes
+                    </button>
+                    <button onclick="closeModal()" class="flex-1 px-6 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-colors font-medium">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Check authentication
+        if (!sessionStorage.getItem('adminLoggedIn')) {
+            window.location.href = 'login.html';
+        }
+
+        // Load data
+        let members = JSON.parse(localStorage.getItem('members')) || [];
+        let collectionAmount = parseFloat(localStorage.getItem('collectionAmount')) || 0;
+
+        // Default member names for initialization
+        const defaultMemberNames = [
+            "Sudharani Appanna Kamble", "Mahalingappa Bharamannavar", "Manjula Sannakki", 
+            "Amar Ashok Honnamani", "Kadambari Choudappa Gadiwaddar", "Shreechandra Dodamani",
+            "Bharati Chatni", "Uday Mahaling Mahantashetti", "Muragesh Bagewadi", "Yashoda Balavad",
+            "Abdulvahab Kurshidalam Teradal", "Mahammadsameer Ramjan Makandar", "Basuraj Ravi Maradi",
+            "Nandeppa Suresh Shirahatti", "Darshan Kakhandaki", "Savita Bhimashi Hanchanal",
+            "Ameer Shekh", "Tangevva B Patil", "Jyoti Mathagar", "Gayatri Sanju Naduvinamani",
+            "Swati Sahadev Pattanashetti", "Ashwini Rajashekharayya Hiremath", "Niyaz Imam Sab Horatti",
+            "Kiran Hawaldar", "Ruksar Faniband", "Nisarga Dodamani", "Gurunath Kittur",
+            "Vinayak Hasilkar", "Keerti Mallappa Urabhinnavar", "Kavita Kiran Sutar",
+            "Prashant Ningappa Ullagaddi", "Sunita Mathapati", "Sushmita Mahadev Vadegali",
+            "Swati Balappa Jiddimani", "Padmini Nagappa Madar", "Sneha Laxman Uppar",
+            "Gangappa Raju Madappagol", "Rekha Anand Hanjagi", "Aishwarya Uttur", 
+            "Bhagyashree Mallappa Ramadurg", "Anupallavi Ramesh Madiwalar", "Jyoti Dundappa Gasti",
+            "Priyanka Adiveppa Lokuri", "Sangeeta Uppar", "Bharati Siddaram Athani",
+            "Shashikala Annappa Gaggari", "Archana Shanta Hosamani", "Rajeshwari Satyappa Nayak",
+            "Bhagirathi Mallappa Alagur", "Laxmi Kallappa Ganiger", "Renuka Rajaput",
+            "Siddarth Masti", "Savitri Raju Gurav", "Divya Basappa Raval", "Mahazabeen Muradsab Hanagandi",
+            "Akshata Shirol", "Rohini M Jadhav", "Adamali Dastagirsab Nadaf", "Rohit S Rajaput",
+            "Vaishali Anand Shirhatti", "Revati Kanatti", "Shridevi Shatteppa Gangappagol",
+            "Soumya Savadi", "Venktesh Benakatti", "Kaveri Madar", "Chaithra Sadappa Chinchakhandi",
+            "Kavya Sadashiv Kadapatti", "Mahantesh Hiremath", "Sahana Nagaraj Metri",
+            "Neelamma Angadi", "Keerti Billur", "Fatima Yadawad", "Keerti Mode",
+            "Tejashwini Vishnu Dharennavar", "Gangavva Arjun Kattimani", "Kaveri Subhas Kalmaddi",
+            "Tanjila Ilayi Pinjar", "Bhagyashree Channabasu Biradarpatil", "Asmita A Savant",
+            "Sujata Mudhol", "Aishwarya Shanur Gadadi", "Bhaghyshri Ashok Gurav", "Priyanka Mutturaj Patrot",
+            "Laxmi Vittal Athani", "Preeti Itagoni", "Sana Shamansab Mujavar", "Ashwini Ashok Badiger",
+            "Gayatri Appasi Maranur", "Shreyanka Kadappa Badagi"
+        ];
+
+        // Initialize members if empty
+        if (members.length === 0) {
+            members = defaultMemberNames.map((name, index) => ({
+                id: index + 1,
+                name: name,
+                status: "NO",
+                amount: 0
+            }));
+            localStorage.setItem('members', JSON.stringify(members));
+        }
+
+        // Update statistics
+        function updateStats() {
+            const paid = members.filter(m => m.status === 'YES').length;
+            const unpaid = members.filter(m => m.status === 'NO').length;
+            const total = members.length;
+            const collected = paid * collectionAmount;
+
+            document.getElementById('totalMembers').textContent = total;
+            document.getElementById('paidMembers').textContent = paid;
+            document.getElementById('unpaidMembers').textContent = unpaid;
+            document.getElementById('totalCollected').textContent = collected.toLocaleString();
+            document.getElementById('currentCollectionAmount').textContent = collectionAmount.toLocaleString();
+        }
+
+        // Render members
+        function renderMembers(membersToRender) {
+            const tbody = document.getElementById('memberTableBody');
+            tbody.innerHTML = '';
+
+            membersToRender.forEach(member => {
+                const row = document.createElement('tr');
+                row.className = 'border-b border-white/5 hover:bg-white/5 transition-colors';
+                
+                const statusBadge = member.status === 'YES' 
+                    ? '<span class="px-3 py-1 rounded-full text-xs font-medium bg-green-500/20 text-green-400">Paid</span>'
+                    : '<span class="px-3 py-1 rounded-full text-xs font-medium bg-red-500/20 text-red-400">Unpaid</span>';
+
+                const statusToggle = member.status === 'YES' 
+                    ? `<button onclick="toggleStatus(${member.id})" class="px-3 py-1 bg-red-500/20 hover:bg-red-500 text-red-400 hover:text-white rounded-lg text-xs transition-colors">Mark Unpaid</button>`
+                    : `<button onclick="toggleStatus(${member.id})" class="px-3 py-1 bg-green-500/20 hover:bg-green-500 text-green-400 hover:text-white rounded-lg text-xs transition-colors">Mark Paid</button>`;
+
+                row.innerHTML = `
+                    <td class="py-4 px-4 text-indigo-300">#${member.id}</td>
+                    <td class="py-4 px-4 font-medium">${member.name}</td>
+                    <td class="py-4 px-4 text-center">${statusBadge}</td>
+                    <td class="py-4 px-4 text-right font-medium">₹${member.amount.toLocaleString()}</td>
+                    <td class="py-4 px-4 text-center">
+                        <div class="flex gap-2 justify-center">
+                            ${statusToggle}
+                            <button onclick="openEditModal(${member.id})" class="px-3 py-1 bg-indigo-500/20 hover:bg-indigo-500 text-indigo-400 hover:text-white rounded-lg text-xs transition-colors">Edit</button>
+                            <button onclick="deleteMember(${member.id})" class="px-3 py-1 bg-red-500/20 hover:bg-red-500 text-red-400 hover:text-white rounded-lg text-xs transition-colors">Delete</button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Add new member
+        function addMember() {
+            const nameInput = document.getElementById('newMemberName');
+            const name = nameInput.value.trim();
+
+            if (!name) {
+                alert('Please enter a member name');
+                return;
+            }
+
+            const newId = Math.max(...members.map(m => m.id)) + 1;
+            const newMember = {
+                id: newId,
+                name: name,
+                status: 'NO',
+                amount: 0
+            };
+
+            members.push(newMember);
+            localStorage.setItem('members', JSON.stringify(members));
+            
+            nameInput.value = '';
+            updateStats();
+            
+            const filter = document.querySelector('.filter-btn.bg-indigo-600').dataset.filter;
+            filterMembers(filter);
+            
+            alert(`Member "${name}" added successfully!`);
+        }
+
+        // Delete member
+        function deleteMember(id) {
+            const member = members.find(m => m.id === id);
+            if (confirm(`Are you sure you want to delete "${member.name}"?`)) {
+                members = members.filter(m => m.id !== id);
+                localStorage.setItem('members', JSON.stringify(members));
+                updateStats();
+                
+                const filter = document.querySelector('.filter-btn.bg-indigo-600').dataset.filter;
+                filterMembers(filter);
+            }
+        }
+
+        // Toggle status
+        function toggleStatus(id) {
+            const member = members.find(m => m.id === id);
+            member.status = member.status === 'YES' ? 'NO' : 'YES';
+            member.amount = member.status === 'YES' ? collectionAmount : 0;
+            
+            localStorage.setItem('members', JSON.stringify(members));
+            updateStats();
+            
+            const filter = document.querySelector('.filter-btn.bg-indigo-600').dataset.filter;
+            filterMembers(filter);
+        }
+
+        // Open edit modal
+        function openEditModal(id) {
+            const member = members.find(m => m.id === id);
+            document.getElementById('editMemberId').value = id;
+            document.getElementById('editMemberName').value = member.name;
+            document.getElementById('editMemberStatus').value = member.status;
+            document.getElementById('editModal').classList.remove('hidden');
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('editModal').classList.add('hidden');
+        }
+
+        // Save edit
+        function saveEdit() {
+            const id = parseInt(document.getElementById('editMemberId').value);
+            const member = members.find(m => m.id === id);
+            
+            member.name = document.getElementById('editMemberName').value.trim();
+            const oldStatus = member.status;
+            member.status = document.getElementById('editMemberStatus').value;
+            member.amount = member.status === 'YES' ? collectionAmount : 0;
+            
+            localStorage.setItem('members', JSON.stringify(members));
+            
+            closeModal();
+            updateStats();
+            
+            const filter = document.querySelector('.filter-btn.bg-indigo-600').dataset.filter;
+            filterMembers(filter);
+        }
+
+        // Filter members
+        function filterMembers(filter) {
+            const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+            let filtered = members;
+
+            if (filter === 'paid') {
+                filtered = members.filter(m => m.status === 'YES');
+            } else if (filter === 'unpaid') {
+                filtered = members.filter(m => m.status === 'NO');
+            }
+
+            if (searchQuery) {
+                filtered = filtered.filter(m => m.name.toLowerCase().includes(searchQuery));
+            }
+
+            renderMembers(filtered);
+
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('bg-indigo-600');
+                btn.classList.add('bg-white/10');
+            });
+            document.querySelector(`[data-filter="${filter}"]`).classList.remove('bg-white/10');
+            document.querySelector(`[data-filter="${filter}"]`).classList.add('bg-indigo-600');
+        }
+
+        // Search handler
+        document.getElementById('searchInput').addEventListener('input', () => {
+            const activeFilter = document.querySelector('.filter-btn.bg-indigo-600').dataset.filter;
+            filterMembers(activeFilter);
+        });
+
+        // Bulk actions
+        function markAllPaid() {
+            if (confirm('Mark all members as paid?')) {
+                members.forEach(m => {
+                    m.status = 'YES';
+                    m.amount = collectionAmount;
+                });
+                localStorage.setItem('members', JSON.stringify(members));
+                updateStats();
+                filterMembers('all');
+            }
+        }
+
+        function markAllUnpaid() {
+            if (confirm('Mark all members as unpaid?')) {
+                members.forEach(m => {
+                    m.status = 'NO';
+                    m.amount = 0;
+                });
+                localStorage.setItem('members', JSON.stringify(members));
+                updateStats();
+                filterMembers('all');
+            }
+        }
+
+        // Close modal on outside click
+        document.getElementById('editModal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) {
+                closeModal();
+            }
+        });
+
+        // Initial load
+        updateStats();
+        renderMembers(members);
+    </script>
+</body>
+</html>
