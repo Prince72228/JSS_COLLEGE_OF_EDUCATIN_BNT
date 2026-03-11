@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Login – JSS Finance</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="min-h-screen">
+  <div class="max-w-lg mx-auto px-4 py-14">
+    <header class="text-center">
+      <h1 class="text-3xl font-semibold">Admin Login</h1>
+      <p class="opacity-80 mt-2">Glassmorphism access panel</p>
+    </header>
+
+    <div class="mt-10 glass border-glow rounded-3xl p-8">
+      <form id="loginForm" class="grid gap-4">
+        <div>
+          <label class="text-sm opacity-80">Username</label>
+          <input id="username" class="input mt-1" placeholder="Enter username" autocomplete="username" />
+        </div>
+        <div>
+          <label class="text-sm opacity-80">Password</label>
+          <input id="password" type="password" class="input mt-1" placeholder="Enter password" autocomplete="current-password" />
+        </div>
+        <p id="loginError" class="hidden text-sm text-red-200"></p>
+        <button id="loginBtn" class="btn primary w-full" type="button">Login</button>
+      </form>
+
+      <div class="mt-6 flex justify-between">
+        <a class="btn ghost" href="index.html">Back</a>
+        <p class="text-xs opacity-70"></p>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/auth.js"></script>
+  <script src="js/login.js"></script>
+</body>
+</html>

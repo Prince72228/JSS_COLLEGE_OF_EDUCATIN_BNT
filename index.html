@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JSS College of Education Banahatti – Finance Management System</title>
+
+  <!-- Tailwind (CDN) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Odometer -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/odometer.js/0.4.8/themes/odometer-theme-default.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/odometer.js/0.4.8/odometer.min.js"></script>
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="min-h-screen">
+  <div class="max-w-6xl mx-auto px-4 py-10">
+    <header class="flex items-center justify-between gap-4">
+      <div class="flex items-center gap-4">
+        <div class="w-12 h-12 rounded-2xl glass border-glow grid place-items-center overflow-hidden">
+          <img src="images/logo.png" alt="JSS" class="w-full h-full object-contain" onerror="this.style.display='none'" />
+          <span class="font-bold text-xl" style="color: var(--gold)">JSS</span>
+        </div>
+        <div>
+          <h1 class="text-xl md:text-2xl font-semibold">JSS College of Education Banahatti</h1>
+          <p class="opacity-80">Finance Management System</p>
+        </div>
+      </div>
+      <nav class="flex items-center gap-2">
+        <a class="btn ghost" href="viewlist.html">Member List</a>
+        <a class="btn ghost" href="viewdetails.html">Expenses</a>
+        <a class="btn primary" href="login.html">Admin</a>
+      </nav>
+    </header>
+
+    <main class="mt-10 grid lg:grid-cols-3 gap-6">
+      <section class="lg:col-span-2 glass border-glow rounded-3xl p-6 md:p-8">
+        <div class="flex items-start justify-between gap-6 flex-wrap">
+          <div>
+            <p class="uppercase tracking-widest text-sm opacity-75">Current Balance</p>
+            <div class="mt-3 flex items-end gap-3">
+              <span class="text-lg opacity-80">₹</span>
+              <div id="balanceOdometer" class="odometer text-4xl md:text-6xl font-semibold">0</div>
+            </div>
+            <p id="balanceText" class="mt-2 opacity-80">₹0</p>
+
+            <div data-skeleton class="mt-4 h-4 w-56 rounded-full bg-white/10 animate-pulse"></div>
+          </div>
+          <div class="w-28 h-28 md:w-32 md:h-32 glass rounded-3xl grid place-items-center border border-white/10">
+            <canvas id="miniChart" width="120" height="120"></canvas>
+          </div>
+        </div>
+
+        <div class="mt-8 grid sm:grid-cols-3 gap-4">
+          <div class="glass rounded-2xl p-4 border border-white/10">
+            <p class="text-sm opacity-80">Collection Amount</p>
+            <p class="text-2xl font-semibold mono">₹<span id="collectionAmount">0</span></p>
+          </div>
+          <div class="glass rounded-2xl p-4 border border-white/10">
+            <p class="text-sm opacity-80">Total Collected</p>
+            <p class="text-2xl font-semibold mono">₹<span id="totalCollected">0</span></p>
+          </div>
+          <div class="glass rounded-2xl p-4 border border-white/10">
+            <p class="text-sm opacity-80">Total Expenses</p>
+            <p class="text-2xl font-semibold mono">₹<span id="totalExpenses">0</span></p>
+          </div>
+        </div>
+
+        <div class="mt-8">
+          <div class="flex items-center justify-between">
+            <p class="font-semibold">Fund Collection Progress</p>
+            <p class="opacity-80"><span id="paidMembers">0</span> paid • <span id="pendingMembers">0</span> pending</p>
+          </div>
+
+          <div id="progressTank" class="progress-tank glass border-glow rounded-3xl mt-4 h-44 md:h-52">
+            <div class="progress-grid"></div>
+            <div id="progressFill" class="progress-fill"></div>
+            <div id="coinLayer" class="absolute inset-0"></div>
+            <div class="absolute top-4 right-4 glass rounded-2xl px-3 py-1 border border-white/10">
+              <span class="text-sm opacity-80">Fill:</span>
+              <span id="progressLabel" class="mono font-semibold">0.00%</span>
+            </div>
+          </div>
+
+          <p class="text-xs opacity-70 mt-2">Fill level = paid members ÷ total members (97).</p>
+        </div>
+
+        <p id="fatalError" class="mt-6 text-sm text-red-200"></p>
+      </section>
+
+      <aside class="glass border-glow rounded-3xl p-6 md:p-8">
+        <h2 class="font-semibold">Quick Stats</h2>
+        <div class="mt-5 grid gap-4">
+          <div class="glass rounded-2xl p-4 border border-white/10">
+            <p class="text-sm opacity-80">Total Members</p>
+            <p class="text-2xl font-semibold mono" id="totalMembers">0</p>
+          </div>
+          <div class="glass rounded-2xl p-4 border border-white/10">
+            <p class="text-sm opacity-80">Paid Members</p>
+            <p class="text-2xl font-semibold mono" id="paidMembers">0</p>
+          </div>
+          <div class="glass rounded-2xl p-4 border border-white/10">
+            <p class="text-sm opacity-80">Pending Members</p>
+            <p class="text-2xl font-semibold mono" id="pendingMembers">0</p>
+          </div>
+        </div>
+
+        <div class="mt-8">
+          <h3 class="font-semibold">Latest Expenses</h3>
+          <div class="mt-3 overflow-auto">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Reason</th>
+                  <th>Amount</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody id="expenseTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </aside>
+
+      <section class="lg:col-span-3 glass border-glow rounded-3xl p-6 md:p-8">
+        <div class="flex items-center justify-between">
+          <h2 class="font-semibold">Member Preview</h2>
+          <a class="btn ghost" href="viewlist.html">View Full List</a>
+        </div>
+        <div class="mt-4 overflow-auto">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Student Name</th>
+                <th>Amount</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="memberTbody"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <footer class="mt-10 opacity-70 text-sm">
+      <p>Realtime sync powered by Firebase Firestore (onSnapshot).</p>
+    </footer>
+  </div>
+
+  <!-- Firebase SDK (Compat for local file support) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+  <!-- App scripts (order matters) -->
+  <script src="js/firebase.js"></script>
+  <script src="js/animations.js"></script>
+  <script src="js/members.js"></script>
+  <script src="js/expenses.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>

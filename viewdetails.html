@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Expenses – JSS Finance</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- jsPDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="min-h-screen">
+  <div class="max-w-6xl mx-auto px-4 py-10">
+    <header class="flex items-center justify-between gap-4 flex-wrap">
+      <div>
+        <h1 class="text-2xl font-semibold">Expense Details</h1>
+        <p class="opacity-80">Realtime synced across all devices</p>
+      </div>
+      <nav class="flex items-center gap-2">
+        <a class="btn ghost" href="index.html">Home</a>
+        <a class="btn ghost" href="viewlist.html">Member List</a>
+        <a class="btn primary" href="login.html">Admin</a>
+      </nav>
+    </header>
+
+    <section class="mt-8 glass border-glow rounded-3xl p-6 md:p-8">
+      <div class="flex items-center justify-between gap-4 flex-wrap">
+        <div>
+          <p class="opacity-80">All entries are stored in Firestore</p>
+        </div>
+        <button id="downloadPdf" class="btn gold">Download A4 Report</button>
+      </div>
+
+      <div class="mt-4 overflow-auto">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Reason</th>
+              <th>Amount</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody id="expenseTbody"></tbody>
+        </table>
+      </div>
+
+      <div class="mt-6 flex items-center justify-end">
+        <div class="glass rounded-2xl px-5 py-3 border border-white/10">
+          <p class="text-sm opacity-80">Total Expenses</p>
+          <p id="totalExpenses" class="text-2xl font-semibold mono">₹0</p>
+        </div>
+      </div>
+
+      <p id="fatalError" class="mt-6 text-sm text-red-200"></p>
+    </section>
+  </div>
+
+  <!-- Firebase SDK (Compat for local file support) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+  <script src="js/firebase.js"></script>
+  <script src="js/expenses.js"></script>
+  <script src="js/expenses-page.js"></script>
+</body>
+</html>
